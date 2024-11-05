@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import styles from './style'; 
 
 interface Book {
     id: number;
@@ -16,13 +17,7 @@ const initialBooks: Book[] = [
 ];
 
 const App = () => {
-    const [books, setBooks] = useState<Book[]>(initialBooks);
-    const [searchTerm, setSearchTerm] = useState<string>('');
     const [cart, setCart] = useState<Book[]>([]);
-
-    const filteredBooks = books.filter(book =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     const addToCart = (book: Book) => {
         if (!cart.find(item => item.id === book.id)) {
@@ -36,43 +31,31 @@ const App = () => {
 
     const totalPrice = cart.reduce((total, book) => total + book.price, 0);
 
-    const renderBookItem = ({ item }: { item: Book }) => {
-        console.log('Rendering Book Item:', item); 
-        return (
-            <View style={styles.bookContainer}>
-                <Text style={styles.bookTitle}>{item.title}</Text>
-                <Text style={styles.bookAuthor}>{item.author}</Text>
-                <Text style={styles.bookPrice}>Price: ${item.price}</Text> 
-                <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
-                    <Text style={styles.addButtonText}>Add to Cart</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    };
+    const renderBookItem = ({ item }: { item: Book }) => (
+        <View style={styles.bookContainer}>
+            <Text style={styles.bookTitle}>{item.title}</Text>
+            <Text style={styles.bookAuthor}>{item.author}</Text>
+            <Text style={styles.bookPrice}>Price: ${item.price}</Text> 
+            <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
+                <Text style={styles.addButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
+        </View>
+    );
 
-    const renderCartItem = ({ item }: { item: Book }) => {
-      console.log('Rendering Cart Item:', item); 
-      return (
-          <View style={styles.cartItemContainer}>
-              <Text style={styles.cartItemText}>{item.title} - ${item.price}</Text>
-              <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(item.id)}>
-                  <Text style={styles.removeButtonText}>Remove</Text>
-              </TouchableOpacity>
-          </View>
-      );
-    };
+    const renderCartItem = ({ item }: { item: Book }) => (
+        <View style={styles.cartItemContainer}>
+            <Text style={styles.cartItemText}>{item.title} - ${item.price}</Text>
+            <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(item.id)}>
+                <Text style={styles.removeButtonText}>Remove</Text>
+            </TouchableOpacity>
+        </View>
+    );
 
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Books List</Text>
-            <TextInput
-                style={styles.searchInput}
-                placeholder="Search for a book..."
-                value={searchTerm}
-                onChangeText={setSearchTerm}
-            />
             <FlatList
-                data={filteredBooks}
+                data={initialBooks}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderBookItem}
                 style={styles.list}
@@ -91,105 +74,5 @@ const App = () => {
         </SafeAreaView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#371949',
-    },
-    searchInput: {
-        borderColor: '#6A1B9A',
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 20,
-        backgroundColor: '#fff',
-    },
-    list: {
-        flex: 1,
-    },
-    bookContainer: {
-        padding: 15,
-        borderRadius: 5,
-        backgroundColor: '#e1bee7',
-        marginBottom: 10,
-    },
-    bookTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'black',
-    },
-    bookAuthor: {
-        fontSize: 16,
-        color: 'black',
-    },
-    bookPrice: {
-        fontSize: 16,
-        color: 'black',
-    },
-    addButton: {
-        backgroundColor: '#371949',
-        padding: 10,
-        borderRadius: 5,
-        marginTop: 10,
-    },
-    addButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    emptyText: {
-        textAlign: 'center',
-        color: '#6A1B9A',
-        marginTop: 20,
-    },
-    cartContainer: {
-        marginTop: 20,
-        padding: 15,
-        backgroundColor: '#e1bee7',
-        borderRadius: 5,
-    },
-    cartTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        textAlign: 'center',
-        color: 'black',
-    },
-    cartItemContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    cartItemText: {
-        fontSize: 16,
-        color: 'black',
-    },
-    removeButton: {
-        backgroundColor: '#371949',
-        padding: 5,
-        borderRadius: 5,
-    },
-    removeButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    totalText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: 10,
-        textAlign: 'center',
-        color: 'black',
-    },
-});
 
 export default App;
